@@ -90,6 +90,8 @@ const (
 	_EVFILT_READ  = -0x1
 	_EVFILT_WRITE = -0x2
 
+	_MAXHOSTNAMELEN = 256
+
 	_FD_CLOEXEC = 0x1
 	_F_GETFL    = 0x3
 	_F_SETFL    = 0x4

@@ -14,7 +14,11 @@ import (
 //go:cgo_import_dynamic libc_madvise madvise "libc.so"
 //go:cgo_import_dynamic libc_mmap mmap "libc.so"
 //go:cgo_import_dynamic libc_munmap munmap "libc.so"
+//go:cgo_import_dynamic libc_open open "libc.so"
+//go:cgo_import_dynamic libc_read read "libc.so"
 //go:cgo_import_dynamic libc_sched_yield sched_yield "libc.so"
+//go:cgo_import_dynamic libc_usleep usleep "libc.so"
+//go:cgo_import_dynamic libc_write write "libc.so"
 //go:cgo_import_dynamic libc_pipe pipe "libc.so"
 //go:cgo_import_dynamic libc_pipe2 pipe2 "libc.so"
 
@@ -24,7 +28,11 @@ import (
 //go:linkname libc_madvise libc_madvise
 //go:linkname libc_mmap libc_mmap
 //go:linkname libc_munmap libc_munmap
+//go:linkname libc_open libc_open
+//go:linkname libc_read libc_read
 //go:linkname libc_sched_yield libc_sched_yield
+//go:linkname libc_usleep libc_usleep
+//go:linkname libc_write libc_write
 //go:linkname libc_pipe libc_pipe
 //go:linkname libc_pipe2 libc_pipe2
 
@@ -35,7 +43,11 @@ var (
 	libc_madvise,
 	libc_mmap,
 	libc_munmap,
+	libc_open,
+	libc_read,
 	libc_sched_yield,
+	libc_usleep,
+	libc_write,
 	libc_pipe,
 	libc_pipe2 libcFunc
 )
@@ -129,3 +141,45 @@ func kevent(kq int32, ch *keventt, nch int32, ev *keventt, nev int32, ts *timesp
 func fcntl(fd, cmd, arg int32) int32 {
 	return int32(sysvicall3(&libc_fcntl, uintptr(fd), uintptr(cmd), uintptr(arg)))
 }
+
+func exitThread(wait *uint32) {
+	// We should never reach exitThread on OpenBSD because we let
+	// libc clean up threads.
+	throw("exitThread")
+}
+
+//go:nosplit
+func open(path *byte, mode, perm int32) int32 {
+	return int32(sysvicall3(&libc_open, uintptr(unsafe.Pointer(path)), uintptr(mode), uintptr(perm)))
+}
+
+//go:nosplit
+func read(fd int32, buf unsafe.Pointer, nbyte int32) int32 {
+	r1, err := sysvicall3Err(&libc_read, uintptr(fd), uintptr(buf), uintptr(nbyte))
+	if c := int32(r1); c >= 0 {
+		return c
+	}
+	return -int32(err)
+}
+
+//go:nosplit
+func closefd(fd int32) int32 {
+	return int32(sysvicall1(&libc_close, uintptr(fd)))
+}
+
+func usleep1(usec uint32)
+
+//go:nosplit
+func usleep(µs uint32) {
+	usleep1(µs)
+}
+
+//go:nosplit
+func write1(fd uintptr, buf unsafe.Pointer, nbyte int32) int32 {
+	r1, err := sysvicall3Err(&libc_write, fd, uintptr(buf), uintptr(nbyte))
+	if c := int32(r1); c >= 0 {
+		return c
+	}
+	return -int32(err)
+}
+
