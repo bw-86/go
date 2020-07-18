@@ -118,7 +118,6 @@ const (
 	F_GETFL    = C.F_GETFL
 	F_SETFL    = C.F_SETFL
 	F_SETFD    = C.F_SETFD
-
 )
 
 type TforkT C.struct___tfork

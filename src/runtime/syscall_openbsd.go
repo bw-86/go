@@ -30,7 +30,6 @@ var pipe1x libcFunc // name to take addr of pipe1
 
 func pipe1() // declared for vet; do NOT call
 
-
 // Many of these are exported via linkname to assembly in the syscall
 // package.
 

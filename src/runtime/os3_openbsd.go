@@ -11,6 +11,7 @@ import (
 //go:cgo_import_dynamic libc_clock_gettime clock_gettime "libc.so"
 //go:cgo_import_dynamic libc_exit exit "libc.so"
 //go:cgo_import_dynamic libc_kevent kevent "libc.so"
+//go:cgo_import_dynamic libc_kqueue kqueue "libc.so"
 //go:cgo_import_dynamic libc_madvise madvise "libc.so"
 //go:cgo_import_dynamic libc_mmap mmap "libc.so"
 //go:cgo_import_dynamic libc_munmap munmap "libc.so"
@@ -25,6 +26,7 @@ import (
 //go:linkname libc_clock_gettime libc_clock_gettime
 //go:linkname libc_exit libc_exit
 //go:linkname libc_kevent libc_kevent
+//go:linkname libc_kqueue libc_kqueue
 //go:linkname libc_madvise libc_madvise
 //go:linkname libc_mmap libc_mmap
 //go:linkname libc_munmap libc_munmap
@@ -40,6 +42,7 @@ var (
 	libc_clock_gettime,
 	libc_exit,
 	libc_kevent,
+	libc_kqueue,
 	libc_madvise,
 	libc_mmap,
 	libc_munmap,
@@ -134,6 +137,11 @@ func setNonblock(fd int32) {
 }
 
 //go:nosplit
+func kqueue() int32 {
+	return int32(sysvicall0(&libc_kqueue))
+}
+
+//go:nosplit
 func kevent(kq int32, ch *keventt, nch int32, ev *keventt, nev int32, ts *timespec) int32 {
 	return int32(sysvicall6(&libc_kevent, uintptr(kq), uintptr(unsafe.Pointer(ch)), uintptr(nch), uintptr(unsafe.Pointer(ev)), uintptr(nev), uintptr(unsafe.Pointer(ts))))
 }
@@ -182,4 +190,3 @@ func write1(fd uintptr, buf unsafe.Pointer, nbyte int32) int32 {
 	}
 	return -int32(err)
 }
-

@@ -302,8 +302,6 @@ func thrsleep(ident uintptr, clock_id int32, tsp *timespec, lock uintptr, abort 
 //go:noescape
 func thrwakeup(ident uintptr, n int32) int32
 
-func kqueue() int32
-
 const (
 	_ESRCH       = 3
 	_EWOULDBLOCK = _EAGAIN
