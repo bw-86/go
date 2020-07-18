@@ -294,10 +294,10 @@ openbsd_386)
 	;;
 openbsd_amd64)
 	mkerrors="$mkerrors -m64"
-	mksyscall="./mksyscall.pl -openbsd"
+	mksyscall="./mksyscall_libc.pl -openbsd"
 	mksysctl="./mksysctl_openbsd.pl"
 	zsysctl="zsysctl_openbsd.go"
-	mksysnum="curl -s 'http://cvsweb.openbsd.org/cgi-bin/cvsweb/~checkout~/src/sys/kern/syscalls.master' | ./mksysnum_openbsd.pl"
+	mksysnum=
 	mktypes="GOARCH=$GOARCH go tool cgo -godefs"
 	;;
 openbsd_arm)
