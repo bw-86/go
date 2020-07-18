@@ -10,9 +10,14 @@ import (
 	"unsafe"
 )
 
+type mts struct {
+	tv_sec  int64
+	tv_nsec int64
+}
+
 type mOS struct {
 	waitsemacount uint32
-	perrno   *int32  // pointer to tls errno
+	perrno        *int32 // pointer to tls errno
 }
 
 type libcFunc uintptr
@@ -297,17 +302,7 @@ func thrsleep(ident uintptr, clock_id int32, tsp *timespec, lock uintptr, abort 
 //go:noescape
 func thrwakeup(ident uintptr, n int32) int32
 
-func osyield()
-
 func kqueue() int32
-
-//go:noescape
-func kevent(kq int32, ch *keventt, nch int32, ev *keventt, nev int32, ts *timespec) int32
-
-func pipe() (r, w int32, errno int32)
-func pipe2(flags int32) (r, w int32, errno int32)
-func closeonexec(fd int32)
-func setNonblock(fd int32)
 
 const (
 	_ESRCH       = 3

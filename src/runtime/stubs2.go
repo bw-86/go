@@ -4,6 +4,7 @@
 
 // +build !plan9
 // +build !solaris
+// +build !openbsd
 // +build !windows
 // +build !js
 // +build !darwin

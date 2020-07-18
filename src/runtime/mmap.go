@@ -4,6 +4,7 @@
 
 // +build !plan9
 // +build !solaris
+// +build !openbsd
 // +build !windows
 // +build !linux !amd64
 // +build !linux !arm64

@@ -109,3 +109,8 @@ TEXT runtime·sigtramp(SB),NOSPLIT,$72
 	MOVQ	bx-8(SP),   BX
 	RET
 
+// Runs on OS stack, called from runtime·osyield.
+TEXT runtime·osyield1(SB),NOSPLIT,$0
+	LEAQ	libc_sched_yield(SB), AX
+	CALL	AX
+	RET

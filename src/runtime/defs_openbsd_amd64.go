@@ -89,6 +89,11 @@ const (
 	_EV_EOF       = 0x8000
 	_EVFILT_READ  = -0x1
 	_EVFILT_WRITE = -0x2
+
+	_FD_CLOEXEC = 0x1
+	_F_GETFL    = 0x3
+	_F_SETFL    = 0x4
+	_F_SETFD    = 0x2
 )
 
 type tforkt struct {
