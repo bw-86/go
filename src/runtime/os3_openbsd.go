@@ -19,6 +19,9 @@ import (
 //go:cgo_import_dynamic libc_read read "libc.so"
 //go:cgo_import_dynamic libc_sched_yield sched_yield "libc.so"
 //go:cgo_import_dynamic libc_sysctl sysctl "libc.so"
+//go:cgo_import_dynamic libc_thrkill thrkill "libc.so"
+//go:cgo_import_dynamic libc_thrsleep thrsleep "libc.so"
+//go:cgo_import_dynamic libc_thrwakeup thrwakeup "libc.so"
 //go:cgo_import_dynamic libc_usleep usleep "libc.so"
 //go:cgo_import_dynamic libc_write write "libc.so"
 //go:cgo_import_dynamic libc_pipe pipe "libc.so"
@@ -35,6 +38,9 @@ import (
 //go:linkname libc_read libc_read
 //go:linkname libc_sched_yield libc_sched_yield
 //go:linkname libc_sysctl libc_sysctl
+//go:linkname libc_thrkill libc_thrkill
+//go:linkname libc_thrsleep libc_thrsleep
+//go:linkname libc_thrwakeup libc_thrwakeup
 //go:linkname libc_usleep libc_usleep
 //go:linkname libc_write libc_write
 //go:linkname libc_pipe libc_pipe
@@ -52,6 +58,9 @@ var (
 	libc_read,
 	libc_sched_yield,
 	libc_sysctl,
+	libc_thrkill,
+	libc_thrsleep,
+	libc_thrwakeup,
 	libc_usleep,
 	libc_write,
 	libc_pipe,
@@ -201,4 +210,26 @@ func sysctl(mib *uint32, miblen uint32, out *byte, size *uintptr, dst *byte, nds
 		return c
 	}
 	return -int32(err)
+}
+
+//go:nosplit
+func walltime1() (sec int64, nsec int32) {
+	var ts mts
+	sysvicall2(&libc_clock_gettime, _CLOCK_REALTIME, uintptr(unsafe.Pointer(&ts)))
+	return ts.tv_sec, int32(ts.tv_nsec)
+}
+
+//go:nosplit
+func thrkill(tid int32, sig int) {
+	sysvicall2(&libc_thrkill, uintptr(tid), uintptr(sig))
+}
+
+//go:nosplit
+func thrsleep(ident uintptr, clock_id int32, tsp *timespec, lock uintptr, abort *uint32) int32 {
+	return int32(sysvicall5(&libc_thrsleep, ident, uintptr(clock_id), uintptr(noescape(unsafe.Pointer(tsp))), lock, uintptr(noescape(unsafe.Pointer(abort)))))
+}
+
+//go:nosplit
+func thrwakeup(ident uintptr, n int32) int32 {
+	return int32(sysvicall2(&libc_thrwakeup, ident, uintptr(n)))
 }

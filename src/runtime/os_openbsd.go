@@ -294,16 +294,9 @@ func sigprocmask(how int32, new, old *sigset) {
 func raiseproc(sig uint32)
 
 func getthrid() int32
-func thrkill(tid int32, sig int)
 
 //go:noescape
 func tfork(param *tforkt, psize uintptr, mm *m, gg *g, fn uintptr) int32
-
-//go:noescape
-func thrsleep(ident uintptr, clock_id int32, tsp *timespec, lock uintptr, abort *uint32) int32
-
-//go:noescape
-func thrwakeup(ident uintptr, n int32) int32
 
 const (
 	_ESRCH       = 3

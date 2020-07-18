@@ -10,6 +10,10 @@
 #include "go_tls.h"
 #include "textflag.h"
 
+// This is needed by asm_amd64.s
+TEXT runtime·settls(SB),NOSPLIT,$8
+	RET
+
 // Call a library function with SysV calling conventions.
 // The called function can take a maximum of 6 INTEGER class arguments,
 // see
@@ -152,6 +156,12 @@ switch:
 
 noswitch:
 	// Not a Go-managed thread. Do not switch stack.
+	CALL	AX
+	RET
+
+// Runs on OS stack. duration (in µs units) is in DI.
+TEXT usleep2<>(SB),NOSPLIT,$0
+	LEAQ	libc_usleep(SB), AX
 	CALL	AX
 	RET
 
