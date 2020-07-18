@@ -233,6 +233,12 @@ func sysvicall5(fn *libcFunc, a1, a2, a3, a4, a5 uintptr) uintptr {
 
 //go:nosplit
 func sysvicall6(fn *libcFunc, a1, a2, a3, a4, a5, a6 uintptr) uintptr {
+	r1, _ := sysvicall6Err(fn, a1, a2, a3, a4, a5, a6)
+	return r1
+}
+
+//go:nosplit
+func sysvicall6Err(fn *libcFunc, a1, a2, a3, a4, a5, a6 uintptr) (r1, err uintptr) {
 	// Leave caller's PC/SP around for traceback.
 	gp := getg()
 	var mp *m
@@ -257,7 +263,7 @@ func sysvicall6(fn *libcFunc, a1, a2, a3, a4, a5, a6 uintptr) uintptr {
 	if mp != nil {
 		mp.libcallsp = 0
 	}
-	return libcall.r1
+	return libcall.r1, libcall.err
 }
 
 //go:noescape
@@ -284,9 +290,6 @@ func sigprocmask(how int32, new, old *sigset) {
 		*old = r
 	}
 }
-
-//go:noescape
-func sysctl(mib *uint32, miblen uint32, out *byte, size *uintptr, dst *byte, ndst uintptr) int32
 
 func raiseproc(sig uint32)
 

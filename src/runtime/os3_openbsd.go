@@ -18,6 +18,7 @@ import (
 //go:cgo_import_dynamic libc_open open "libc.so"
 //go:cgo_import_dynamic libc_read read "libc.so"
 //go:cgo_import_dynamic libc_sched_yield sched_yield "libc.so"
+//go:cgo_import_dynamic libc_sysctl sysctl "libc.so"
 //go:cgo_import_dynamic libc_usleep usleep "libc.so"
 //go:cgo_import_dynamic libc_write write "libc.so"
 //go:cgo_import_dynamic libc_pipe pipe "libc.so"
@@ -33,6 +34,7 @@ import (
 //go:linkname libc_open libc_open
 //go:linkname libc_read libc_read
 //go:linkname libc_sched_yield libc_sched_yield
+//go:linkname libc_sysctl libc_sysctl
 //go:linkname libc_usleep libc_usleep
 //go:linkname libc_write libc_write
 //go:linkname libc_pipe libc_pipe
@@ -49,6 +51,7 @@ var (
 	libc_open,
 	libc_read,
 	libc_sched_yield,
+	libc_sysctl,
 	libc_usleep,
 	libc_write,
 	libc_pipe,
@@ -185,6 +188,15 @@ func usleep(µs uint32) {
 //go:nosplit
 func write1(fd uintptr, buf unsafe.Pointer, nbyte int32) int32 {
 	r1, err := sysvicall3Err(&libc_write, fd, uintptr(buf), uintptr(nbyte))
+	if c := int32(r1); c >= 0 {
+		return c
+	}
+	return -int32(err)
+}
+
+//go:nosplit
+func sysctl(mib *uint32, miblen uint32, out *byte, size *uintptr, dst *byte, ndst uintptr) int32 {
+	r1, err := sysvicall6Err(&libc_sysctl, uintptr(unsafe.Pointer(mib)), uintptr(miblen), uintptr(unsafe.Pointer(out)), uintptr(unsafe.Pointer(size)), uintptr(unsafe.Pointer(dst)), uintptr(ndst))
 	if c := int32(r1); c >= 0 {
 		return c
 	}
