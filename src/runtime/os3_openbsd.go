@@ -196,7 +196,7 @@ func write1(fd uintptr, buf unsafe.Pointer, nbyte int32) int32 {
 
 //go:nosplit
 func sysctl(mib *uint32, miblen uint32, out *byte, size *uintptr, dst *byte, ndst uintptr) int32 {
-	r1, err := sysvicall6Err(&libc_sysctl, uintptr(unsafe.Pointer(mib)), uintptr(miblen), uintptr(unsafe.Pointer(out)), uintptr(unsafe.Pointer(size)), uintptr(unsafe.Pointer(dst)), uintptr(ndst))
+	r1, err := sysvicall6Err(&libc_sysctl, uintptr(noescape(unsafe.Pointer(mib))), uintptr(miblen), uintptr(noescape(unsafe.Pointer(out))), uintptr(noescape(unsafe.Pointer(size))), uintptr(noescape(unsafe.Pointer(dst))), uintptr(ndst))
 	if c := int32(r1); c >= 0 {
 		return c
 	}
