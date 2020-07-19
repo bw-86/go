@@ -29,3 +29,7 @@ func (msghdr *Msghdr) SetControllen(length int) {
 func (cmsg *Cmsghdr) SetLen(length int) {
 	cmsg.Len = uint32(length)
 }
+
+// RTM_LOCK only exists in OpenBSD 6.3 and earlier.
+const RTM_LOCK = 0x8
+
