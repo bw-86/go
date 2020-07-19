@@ -378,7 +378,7 @@ func nanotime1() int64 {
 		tp       unsafe.Pointer
 	}{_CLOCK_MONOTONIC, unsafe.Pointer(&ts)}
 	libcCall(unsafe.Pointer(funcPC(clock_gettime_trampoline)), unsafe.Pointer(&args))
-	return ts.tv_sec*1e9 + ts.tv_nsec
+	return ts.tv_sec*1e9 + int64(ts.tv_nsec)
 }
 func clock_gettime_trampoline()
 
